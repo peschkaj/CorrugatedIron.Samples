@@ -107,7 +107,7 @@ namespace Sample.Unity
             // let's try a map/reduce function, with javascript, to count the
             // number of objects in the bucket
             var sumMapRed = new RiakMapReduceQuery()
-                .Inputs(new RiakPhaseInputs(Bucket))
+                .Inputs(Bucket)
                 .MapJs(m => m.Source(@"function(o) {return [ 1 ];}"))
                 .ReduceJs(r => r.Name(@"Riak.reduceSum").Keep(true));
 
