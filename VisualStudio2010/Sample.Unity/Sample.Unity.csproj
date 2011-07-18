@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CorrugatedIron">
+    <Reference Include="CorrugatedIron, Version=0.0.5.0, Culture=neutral, PublicKeyToken=fb1ec7de601674df, processorArchitecture=MSIL">
       <HintPath>..\packages\CorrugatedIron.0.1.0.0\lib\net40\CorrugatedIron.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
