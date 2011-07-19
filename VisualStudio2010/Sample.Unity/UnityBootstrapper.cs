@@ -24,7 +24,7 @@ namespace Sample.Unity
             container.RegisterType<IRiakCluster, RiakCluster>(new ContainerControlledLifetimeManager());
 
             // register the client creator (multiple instance)
-            container.RegisterType<IRiakClient, RiakClient>();
+            container.RegisterType<IRiakClient>(new InjectionFactory(c => c.Resolve<IRiakCluster>().CreateClient()));
 
             return container;
         }
