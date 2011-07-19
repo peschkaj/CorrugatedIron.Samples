@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Autofac;
 using CorrugatedIron;
-using CorrugatedIron.Comms;
 using CorrugatedIron.Extensions;
 using CorrugatedIron.Models;
 using CorrugatedIron.Models.MapReduce;
 using CorrugatedIron.Util;
 using Microsoft.Practices.Unity;
 using Newtonsoft.Json.Linq;
+using Sample.Autofac;
 using Sample.TinyIoc;
 using Sample.Unity;
 
@@ -32,7 +33,7 @@ namespace Sample
             Console.WriteLine(" 1 : Unity");
             Console.WriteLine(" 2 : TinyIoC");
             Console.WriteLine(" 3 : Autofac");
-            Console.Write("Enter number [1 to 2] > ");
+            Console.Write("Enter number [1 to 3] > ");
 
             // get an instance of a RiakClient that we can use
             IRiakClient client;
@@ -42,6 +43,12 @@ namespace Sample
                 case "2":
                     {
                         var container = TinyIocBootstrapper.Bootstrap();
+                        client = container.Resolve<IRiakClient>();
+                        break;
+                    }
+                case "3":
+                    {
+                        var container = AutofacBootstrapper.Bootstrap();
                         client = container.Resolve<IRiakClient>();
                         break;
                     }
@@ -59,11 +66,13 @@ namespace Sample
         private static void Run(IRiakClient client)
         {
             // is the server alive?
+            Console.WriteLine("Pinging the server ...");
             var pingResult = client.Ping();
             System.Diagnostics.Debug.Assert(pingResult.IsSuccess);
 
             // here's how you'd go about setting the properties on a bucket
             // (there are lots more than demoed here).
+            Console.WriteLine("Setting some bucket properties via REST ...");
             var restProps = new RiakBucketProperties()
                 .SetAllowMultiple(true)
                 .SetWVal(3);
@@ -74,6 +83,7 @@ namespace Sample
 
             // here's a sample which uses just the PBC properties and hence runs a
             // lot faster.
+            Console.WriteLine("Setting some bucket properties via PBC ...");
             var pbcProps = new RiakBucketProperties()
                 .SetAllowMultiple(false);
             client.SetBucketProperties(Bucket, pbcProps);
@@ -82,6 +92,7 @@ namespace Sample
             var keys = new List<string>();
 
             // let's write some stuff to Riak, starting with a simple put
+            Console.WriteLine("Simple Put ...");
             var simplePutData = CreateData(0);
             var simplePutResponse = client.Put(simplePutData);
             System.Diagnostics.Debug.Assert(simplePutResponse.IsSuccess);
@@ -90,6 +101,7 @@ namespace Sample
             // next write and pull out the resulting object at the same time,
             // and specifying a different write quorum
             var putWithBody = CreateData(1);
+            Console.WriteLine("Simple Put with custom quorum ...");
             var putWithBodyResponse = client.Put(putWithBody, new RiakPutOptions { ReturnBody = true, W = 1 });
             System.Diagnostics.Debug.Assert(putWithBodyResponse.IsSuccess);
             System.Diagnostics.Debug.Assert(putWithBodyResponse.Value != null);
@@ -104,6 +116,7 @@ namespace Sample
                 objects.Add(obj);
                 keys.Add(obj.Key);
             }
+            Console.WriteLine("Bulk insert ...");
             var bulkInsertResults = client.Put(objects);
             // verify that they all went in
             foreach (var r in bulkInsertResults)
@@ -113,6 +126,7 @@ namespace Sample
 
             // let's see if we can get out all the objects that we expect to retrieve
             // starting with a simple get:
+            Console.WriteLine("Simple Get ...");
             var simpleGetResult = client.Get(Bucket, keys[0]);
             System.Diagnostics.Debug.Assert(simpleGetResult.IsSuccess);
             System.Diagnostics.Debug.Assert(simpleGetResult.Value != null);
@@ -120,6 +134,7 @@ namespace Sample
             // let's do a bulk get of all the objects we've written so far, again
             // mucking with the quorum value
             var objectIds = keys.Select(k => new RiakObjectId(Bucket, k));
+            Console.WriteLine("Bulk Get ...");
             var bulkGetResults = client.Get(objectIds, 1);
 
             // verify that we got everything
@@ -138,17 +153,17 @@ namespace Sample
 
             // execute this query with blocking IO, waiting for all the results to come
             // back before we process them
+            Console.WriteLine("Blocking map/reduce query ...");
             var blockingMRResult = client.MapReduce(sumMapRed);
             System.Diagnostics.Debug.Assert(blockingMRResult.IsSuccess);
             // next, pull out the phase we're interested in to get the result we want
-            var reducePhaseResult = blockingMRResult.Value.PhaseResults.Last();
-            // get the value and convert it to something meaningful
-            var reducePhaseJson = JArray.Parse(reducePhaseResult.Value.FromRiakString());
-            System.Diagnostics.Debug.Assert(reducePhaseJson[0].Value<int>() == 12);
+            var reducePhaseResult = blockingMRResult.Value.PhaseResults.Last().GetObject<int[]>();
+            System.Diagnostics.Debug.Assert(reducePhaseResult[0] == 12);
 
             // now let's do the same thing, but with the blocking version that streams
             // the results back per phase, rather than waiting for all the reults to
             // be calculated first
+            Console.WriteLine("Blocking streaming map/reduce query ...");
             var streamingMRResult = client.StreamMapReduce(sumMapRed);
             System.Diagnostics.Debug.Assert(streamingMRResult.IsSuccess);
             foreach (var result in streamingMRResult.Value.PhaseResults)
@@ -172,13 +187,18 @@ namespace Sample
             // (usually you wouldn't worry about this in a Ui app, you'd just take
             // the result of the other thread and dispatch it to the UI when processed)
             var autoResetEvent = new AutoResetEvent(false);
+            Console.WriteLine("Starting async streaming map/reduce query ...");
             client.Async.StreamMapReduce(sumMapRed, result => HandleStreamingMapReduce(result, autoResetEvent));
+            Console.WriteLine("Waiting for async streaming map/reduce query result ...");
             autoResetEvent.WaitOne();
 
             // finally delete the bucket (this can also be done asynchronously)
             // this calls ListKeys behind the scenes, so it's a very slow process. Riak
             // doesn't currently have the ability to quickly delete a bucket.
+            Console.WriteLine("Deleting the whole test bucket ...");
             client.DeleteBucket(Bucket);
+
+            Console.WriteLine("Sample app complete!");
         }
 
         static void HandleStreamingMapReduce(RiakResult<RiakStreamedMapReduceResult> streamingMRResult, EventWaitHandle handle)
@@ -186,10 +206,10 @@ namespace Sample
             System.Diagnostics.Debug.Assert(streamingMRResult.IsSuccess);
             foreach (var result in streamingMRResult.Value.PhaseResults)
             {
+                Console.WriteLine("Handling async result ...");
                 if (result.Phase == 1)
                 {
-                    var json = JArray.Parse(result.Value.FromRiakString());
-                    System.Diagnostics.Debug.Assert(json[0].Value<int>() == 12);
+                    System.Diagnostics.Debug.Assert(result.GetObject<int[]>()[0] == 12);
                 }
             }
 
@@ -198,9 +218,7 @@ namespace Sample
 
         static RiakObject CreateData(int index)
         {
-            var key = Guid.NewGuid().ToString();
-            var value = "{\"index\":" + index + ",\"data\":\"" + Guid.NewGuid() + "\"}";
-            return new RiakObject(Bucket, key, value, RiakConstants.ContentTypes.ApplicationJson);
+            return new RiakObject(Bucket, Guid.NewGuid().ToString(), new { index = index, data = Guid.NewGuid().ToString() });
         }
     }
 }
