@@ -31,6 +31,7 @@ namespace Sample
             Console.WriteLine("Choose a bootstrapper:");
             Console.WriteLine(" 1 : Unity");
             Console.WriteLine(" 2 : TinyIoC");
+            Console.WriteLine(" 3 : Autofac");
             Console.Write("Enter number [1 to 2] > ");
 
             // get an instance of a RiakClient that we can use
