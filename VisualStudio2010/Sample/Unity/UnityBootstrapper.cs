@@ -10,7 +10,7 @@ namespace Sample.Unity
         public static IUnityContainer Bootstrap()
         {
             // pull the configuration straight out of the app.config file using the appropriate section name
-            var clusterConfig = RiakClusterConfiguration.LoadFromConfig("riakClusterConfiguration");
+            var clusterConfig = RiakClusterConfiguration.LoadFromConfig("riakConfig");
 
             var container = new UnityContainer();
             // register the configuration instance with the IoC container

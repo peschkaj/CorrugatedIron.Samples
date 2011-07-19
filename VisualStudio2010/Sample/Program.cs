@@ -7,12 +7,12 @@ using CorrugatedIron.Comms;
 using CorrugatedIron.Extensions;
 using CorrugatedIron.Models;
 using CorrugatedIron.Models.MapReduce;
-using CorrugatedIron.Models.MapReduce.Inputs;
 using CorrugatedIron.Util;
 using Microsoft.Practices.Unity;
 using Newtonsoft.Json.Linq;
+using Sample.Unity;
 
-namespace Sample.Unity
+namespace Sample
 {
     /// <summary>
     /// This is just a sample which shows how to load the CI client via Unity
@@ -27,12 +27,26 @@ namespace Sample.Unity
 
         static void Main(string[] args)
         {
-            // grab a unity container which has everything we need wired in
-            var container = UnityBootstrapper.Bootstrap();
+            args = args == null || args.Length == 0 ? new[] { "unity" } : args;
 
             // get an instance of a RiakClient that we can use
-            var client = container.Resolve<IRiakClient>();
+            IRiakClient client;
 
+            switch (args[0])
+            {
+                default:
+                    {
+                        // grab a unity container which has everything we need wired in
+                        var container = UnityBootstrapper.Bootstrap();
+                        client = container.Resolve<IRiakClient>();
+                        break;
+                    }
+            }
+            Run(client);
+        }
+
+        private static void Run(IRiakClient client)
+        {
             // is the server alive?
             var pingResult = client.Ping();
             System.Diagnostics.Debug.Assert(pingResult.IsSuccess);
@@ -154,9 +168,6 @@ namespace Sample.Unity
             // this calls ListKeys behind the scenes, so it's a very slow process. Riak
             // doesn't currently have the ability to quickly delete a bucket.
             client.DeleteBucket(Bucket);
-
-            // clean up the cluster
-            container.Resolve<IRiakCluster>().Dispose();
         }
 
         static void HandleStreamingMapReduce(RiakResult<RiakStreamedMapReduceResult> streamingMRResult, EventWaitHandle handle)
