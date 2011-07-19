@@ -10,6 +10,7 @@ using CorrugatedIron.Models.MapReduce;
 using CorrugatedIron.Util;
 using Microsoft.Practices.Unity;
 using Newtonsoft.Json.Linq;
+using Sample.TinyIoc;
 using Sample.Unity;
 
 namespace Sample
@@ -27,13 +28,22 @@ namespace Sample
 
         static void Main(string[] args)
         {
-            args = args == null || args.Length == 0 ? new[] { "unity" } : args;
+            Console.WriteLine("Choose a bootstrapper:");
+            Console.WriteLine(" 1 : Unity");
+            Console.WriteLine(" 2 : TinyIoC");
+            Console.Write("Enter number [1 to 2] > ");
 
             // get an instance of a RiakClient that we can use
             IRiakClient client;
 
-            switch (args[0])
+            switch (Console.ReadLine())
             {
+                case "2":
+                    {
+                        var container = TinyIocBootstrapper.Bootstrap();
+                        client = container.Resolve<IRiakClient>();
+                        break;
+                    }
                 default:
                     {
                         // grab a unity container which has everything we need wired in

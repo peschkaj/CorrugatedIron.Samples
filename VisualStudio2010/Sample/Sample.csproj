@@ -66,6 +66,8 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TinyIoc\TinyIoC.cs" />
+    <Compile Include="TinyIoc\TinyIocBootstrapper.cs" />
     <Compile Include="Unity\UnityBootstrapper.cs" />
   </ItemGroup>
   <ItemGroup>
