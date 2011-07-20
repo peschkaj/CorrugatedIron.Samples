@@ -9,7 +9,9 @@ using CorrugatedIron.Models;
 using CorrugatedIron.Models.MapReduce;
 using Microsoft.Practices.Unity;
 using Newtonsoft.Json.Linq;
+using Ninject;
 using Sample.Autofac;
+using Sample.Ninject;
 using Sample.Structuremap;
 using Sample.TinyIoc;
 using Sample.Unity;
@@ -34,7 +36,8 @@ namespace Sample
             Console.WriteLine(" 2 : TinyIoC");
             Console.WriteLine(" 3 : Autofac");
             Console.WriteLine(" 4 : Autofac");
-            Console.Write("Enter number [1 to 4] > ");
+            Console.WriteLine(" 5 : Ninject");
+            Console.Write("Enter number [1 to 5] > ");
 
             // get an instance of a RiakClient that we can use
             IRiakClient client;
@@ -57,6 +60,12 @@ namespace Sample
                     {
                         var container = StructuremapBootstrapper.Bootstrap();
                         client = container.GetInstance<IRiakClient>();
+                        break;
+                    }
+                case "5":
+                    {
+                        var container = NinjectBootstrapper.Bootstrap();
+                        client = container.Get<IRiakClient>();
                         break;
                     }
                 default:
