@@ -5,9 +5,18 @@ This repository contains a set of sample applications which demonstrate how to s
 
 The projects are:
 
-* Sample.Unity - A simple project which demonstrates how to load up CorrugatedIron from the `app.config` file and wire together the components using Microsoft's [Unity][] IoC container. It also has a mini tutorial in code which attempts to explain how to use the API.
-* Sample.YakRiak - This is a .NET client for Sean Cribb's [YakRiak][] application. It uses the configuration/setup from the `Sample.Unity` project and shows basic use of **Put** and **Async Streaming Map/Reduce** operations.
+* Sample - A simple project which demonstrates how to load up CorrugatedIron from the `app.config` file and wire together the components using many of the popular IoC containers. The code includes how to wire up CorrugatedIron using:
+    * [Autofac][]
+    * [Ninject][]
+    * [StructureMap][]
+    * [TinyIoC][]
+    * [Unity][]
+* Sample.YakRiak - This is a .NET client for Sean Cribb's [YakRiak][] application. It uses the configuration/setup from the `Sample` project (using [Unity][]) and shows basic use of **Put** and **Async Streaming Map/Reduce** operations.
 
+  [Autofac]: http://code.google.com/p/autofac/ "Autofac IoC"
   [CorrugatedIron]: http://corrugatediron.org/ "CorrugatedIron - .NET Riak Client"
+  [Ninject]: http://ninject.org/ "Ninject IoC"
+  [StructureMap]: http://structuremap.net/structuremap/ "StructureMap IoC"
+  [TinyIoC]: https://github.com/grumpydev/TinyIoC "TinyIoC"
   [Unity]: http://unity.codeplex.com/ "Unity IoC"
   [YakRiak]: http://github.com/seancribbs/yakriak "YakRiak"
