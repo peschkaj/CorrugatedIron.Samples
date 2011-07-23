@@ -28,6 +28,5 @@ namespace Sample.SessionStateProvider
 
             return container;
         }
-        }
     }
 }
