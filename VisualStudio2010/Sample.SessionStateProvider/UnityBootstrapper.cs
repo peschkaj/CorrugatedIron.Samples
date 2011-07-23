@@ -11,10 +11,12 @@ namespace Sample.SessionStateProvider
         {
             // pull the configuration straight out of the app.config file using the appropriate section name
             var clusterConfig = RiakClusterConfiguration.LoadFromConfig("riakClusterConfiguration");
+            var sessionConfig = RiakSessionStateConfiguration.LoadFromConfig("riakSessionConfiguration");
 
             var container = new UnityContainer();
             // register the configuration instance with the IoC container
             container.RegisterInstance<IRiakClusterConfiguration>(clusterConfig);
+            container.RegisterInstance<RiakSessionStateConfiguration>(sessionConfig);
 
             // register the default node factory (single instance)
             container.RegisterType<IRiakNodeFactory, RiakNodeFactory>(new ContainerControlledLifetimeManager());

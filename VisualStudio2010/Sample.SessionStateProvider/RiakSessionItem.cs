@@ -8,6 +8,7 @@ namespace Sample.SessionStateProvider
     public class RiakSessionItem
     {
         private int _timeout = 30;
+        private bool _locked = false;
 
         public string SessionContainer { get; set; }
         public string SessionId { get; set; }
@@ -15,7 +16,6 @@ namespace Sample.SessionStateProvider
         public DateTime Expires { get; set; }
         public DateTime LockDate { get; set; }
         public int LockId { get; set; }
-        public bool Locked { get; set; }
         public int Flags { get; set; }
         public string SessionStoreItems { get; set; }
         public int Timeout
@@ -29,6 +29,18 @@ namespace Sample.SessionStateProvider
             {
                 _timeout = value;
                 Expires = Created.AddMinutes(_timeout);
+            }
+        }
+        public bool Locked
+        {
+            get
+            {
+                return _locked;
+            }
+            set
+            {
+                _locked = value;
+                LockDate = DateTime.Now;
             }
         }
 
