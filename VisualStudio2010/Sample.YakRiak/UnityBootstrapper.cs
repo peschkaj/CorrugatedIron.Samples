@@ -16,15 +16,13 @@ namespace Sample.YakRiak
             // register the configuration instance with the IoC container
             container.RegisterInstance<IRiakClusterConfiguration>(clusterConfig);
 
-            // register the default node factory (single instance)
-            container.RegisterType<IRiakNodeFactory, RiakNodeFactory>(new ContainerControlledLifetimeManager());
             // register the default connection factory (single instance)
             container.RegisterType<IRiakConnectionFactory, RiakConnectionFactory>(new ContainerControlledLifetimeManager());
             // register the default cluster (single instance)
             container.RegisterType<IRiakCluster, RiakCluster>(new ContainerControlledLifetimeManager());
 
             // register the client creator (multiple instance)
-            container.RegisterType<IRiakClient, RiakClient>();
+            container.RegisterType<IRiakClient>(new InjectionFactory(c => c.Resolve<IRiakCluster>().CreateClient()));
 
             return container;
         }

@@ -6,9 +6,7 @@ using CorrugatedIron;
 using CorrugatedIron.Extensions;
 using CorrugatedIron.Models;
 using CorrugatedIron.Models.MapReduce;
-using CorrugatedIron.Models.MapReduce.Inputs;
 using CorrugatedIron.Util;
-using Newtonsoft.Json;
 
 namespace Sample.YakRiak
 {
@@ -90,8 +88,7 @@ namespace Sample.YakRiak
                 name = _userName,
                 key = Md5(_userName + "-" + DateTime.UtcNow)
             };
-            var json = JsonConvert.SerializeObject(yakMsg);
-            var riakObj = new RiakObject("messages", yakMsg.key, json, RiakConstants.ContentTypes.ApplicationJson);
+            var riakObj = new RiakObject("messages", yakMsg.key, yakMsg);
             var result = _riakClient.Put(riakObj);
             if (!result.IsSuccess)
             {
@@ -107,7 +104,7 @@ namespace Sample.YakRiak
             // and do a simple map reduce which gets the last 25 elements that appear in that
             // time frame.
             var pollQuery = new RiakMapReduceQuery()
-                .Inputs(new RiakPhaseInputs("messages"))
+                .Inputs("messages")
                 .MapJs(m => m.BucketKey("yakmr", "mapMessageSince").Argument(_since))
                 .ReduceJs(r => r.BucketKey("yakmr", "reduceSortTimestamp"))
                 .ReduceJs(r => r.BucketKey("yakmr", "reduceLimitLastN").Argument(25).Keep(true));
@@ -130,7 +127,7 @@ namespace Sample.YakRiak
                     if (phase.Value != null)
                     {
                         // deserialize into an array of messages
-                        var messages = JsonConvert.DeserializeObject<YakMessage[]>(phase.Value.FromRiakString());
+                        var messages = phase.GetObject<YakMessage[]>();
 
                         // throw them on screen
                         foreach (var m in messages)
@@ -144,7 +141,7 @@ namespace Sample.YakRiak
 
             // create the next map reduce job
             var pollQuery = new RiakMapReduceQuery()
-                .Inputs(new RiakPhaseInputs("messages"))
+                .Inputs("messages")
                 .MapJs(m => m.BucketKey("yakmr", "mapMessageSince").Argument(_since))
                 .ReduceJs(r => r.BucketKey("yakmr", "reduceSortTimestamp").Keep(true));
 

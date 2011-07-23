@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Unity", "Sample.Unity\Sample.Unity.csproj", "{83E22DAC-ECA3-4DD3-9D0C-7148910CF46C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{83E22DAC-ECA3-4DD3-9D0C-7148910CF46C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.YakRiak", "Sample.YakRiak\Sample.YakRiak.csproj", "{06E040DF-0776-4B2A-A6C6-81DBBB1FCDC9}"
 EndProject
