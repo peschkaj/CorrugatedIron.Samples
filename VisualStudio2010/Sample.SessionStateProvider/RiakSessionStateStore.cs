@@ -250,7 +250,7 @@ namespace Sample.SessionStateProvider
         {
             // MR to get sessions to delete
             var query = new RiakMapReduceQuery();
-            query.Inputs(new RiakPhaseInputs(new RiakBucketInput(ApplicationName)))
+            query.Inputs(ApplicationName)
                 .MapJs(
                     m =>
                     m.Source(@"
@@ -274,7 +274,7 @@ function (value, keyData, arg) {
             
             if (results.IsSuccess)
             {
-                var keys = results.Value.PhaseResults[results.Value.PhaseResults.Count - 1].Value.FromRiakString();
+                var keys = results.Value.PhaseResults.ElementAt(results.Value.PhaseResults.Count() - 1).Value.FromRiakString();
                 var keyList = JsonConvert.DeserializeObject<string[]>(keys);
 
                 var riakObjectIdList = keyList.Select(key => new RiakObjectId(ApplicationName, key)).ToList();
@@ -296,7 +296,7 @@ function (value, keyData, arg) {
         {
             // MR to get sessions to delete
             var query = new RiakMapReduceQuery();
-            query.Inputs(new RiakPhaseInputs(new RiakBucketInput(ApplicationName)))
+            query.Inputs(ApplicationName)
                 .MapJs(
                     m =>
                     m.Source(@"
@@ -320,7 +320,7 @@ function (value, keyData, arg) {
 
             if (results.IsSuccess)
             {
-                var keys = results.Value.PhaseResults[results.Value.PhaseResults.Count - 1].Value.FromRiakString();
+                var keys = results.Value.PhaseResults.ElementAt(results.Value.PhaseResults.Count() - 1).Value.FromRiakString();
                 var keyList = JsonConvert.DeserializeObject<string[]>(keys);
 
                 var riakObjectIdList = keyList.Select(key => new RiakObjectId(ApplicationName, key)).ToList();

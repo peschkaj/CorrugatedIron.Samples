@@ -35,9 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CorrugatedIron, Version=0.0.6.0, Culture=neutral, PublicKeyToken=fb1ec7de601674df, processorArchitecture=MSIL">
+    <Reference Include="CorrugatedIron, Version=0.1.2.0, Culture=neutral, PublicKeyToken=fb1ec7de601674df, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CorrugatedIron.0.1.0.0\lib\net40\CorrugatedIron.dll</HintPath>
+      <HintPath>..\packages\CorrugatedIron.0.1.2.0\lib\net40\CorrugatedIron.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>

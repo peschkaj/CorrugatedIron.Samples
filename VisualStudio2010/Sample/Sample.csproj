@@ -41,9 +41,8 @@
     <Reference Include="Autofac.Configuration">
       <HintPath>..\packages\Autofac.2.5.1.827\lib\NET40\Autofac.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="CorrugatedIron, Version=0.0.6.0, Culture=neutral, PublicKeyToken=fb1ec7de601674df, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\CorrugatedIron.0.1.0.0\lib\net40\CorrugatedIron.dll</HintPath>
+    <Reference Include="CorrugatedIron">
+      <HintPath>..\packages\CorrugatedIron.0.1.2.0\lib\net40\CorrugatedIron.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
